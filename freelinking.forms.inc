@@ -68,7 +68,7 @@ function freelinking_settings($form, &$form_state) {
 } // endfunction freelinking_settings (admin settings)
 
 function _freelinking_failover_form(&$form, $plugin_name, $plugin, $setting_name) {
-  if (is_array($plugin['failover'])) {
+  if (isset($plugin['failover']) && is_array($plugin['failover'])) {
     foreach ($plugin['failover'] as $option) {
       $options[$option] = t('Use plugin !plugin', array('!plugin' => $option));
     }
@@ -80,7 +80,7 @@ function _freelinking_failover_form(&$form, $plugin_name, $plugin, $setting_name
       '#default_value' => variable_get($setting_name, 'none'),
     );
   }
-  elseif ($plugin['failover']) {
+  elseif (isset($plugin['failover'])) {
     $form[$plugin_name]['settings'][$setting_name] = array(
       '#title' => t('Plugin Fallback Action'),
       '#type' => 'textfield',
