@@ -26,13 +26,13 @@ function freelinking_nodetitle_callback($target, $plugin) {
   }
 
   // construct values for link
-  $title = $target['text'] ? $target['text'] : $target['dest'];
-
+  $title = $target['text'] ? $target['text'] : $node->title;
+  
   if (!$target['tooltip']) {
     $target['tooltip'] = freelinking_internal_tooltip('node', $node->nid);
   }
   // return link structure
-  return array($node->title, 'node/' . $node->nid, array(
+  return array($title, 'node/' . $node->nid, array(
       'attributes' => array('title' => $target['tooltip']),
       'language' => $node->language,
   ));
