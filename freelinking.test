@@ -84,6 +84,7 @@ class FreelinkingTest extends DrupalWebTestCase {
     $edit = array();
     $edit['title'] = t('Testing all freelinking plugins');
     $edit['body[und][0][value]'] = '<ul>' .
+                    '  <li>Default plugin (nodetitle):  [[First page]]</li>' .
                     '  <li>Drupalproject:  [[drupalproject:freelinking]]</li>' .
                     '  <li>Drupalorgnid:   [[drupalorgnid:1]]</li>' .
                     '  <li>One inch frame: [[oif:about-one-inch-frame]]</li>' .
@@ -100,18 +101,26 @@ class FreelinkingTest extends DrupalWebTestCase {
                     '  <li>User:           [[u:' . $this->privileged_user->uid . ']]</li>' .
                     '  <li>Path:           [[path:/node/3]]</li>' .
                     '  <li>Wikipedia:      [[wikipedia:Main_Page]]</li>' .
+                    '</ul>' .
+                    '<p>Testing compatibility with other modules</p>' .
+                    '<ul>' .
+                    '  <li>Respects [[drupalproject:media]] tags, such as:' .
+                    '  [[{"type":"media","view_mode":"media_large","fid":"286","attributes":{"alt":"","class":"media-image","typeof":"foaf:Image"}}]]</li>' .
                     '</ul>';
+
     $this->drupalPost('node/add/page', $edit, t('Save'));
     $this->assertText(t('Basic page @title has been created.', array('@title' => $edit['title'])));
 
     // Verify each freelink plugin
+    $this->assertLink(t('First page'), 0, t('Default plugin (nodetitle) freelink was generated successfully without 
+      specifying plugin name between brackets.'));
     $this->assertLinkByHref('http://drupal.org/project/freelinking', 0,
                             t('Drupalproject freelink was generated successfully.'));
     $this->assertLinkByHref('http://drupal.org/node/1', 0,
                             t('Drupalorgnid freelink was generated successfully.'));
     $this->assertLinkByHref('http://oif.eafarris.com/wiki/about-one-inch-frame', 0,
                             t('One inch frame freelink was generated successfully.'));
-    $this->assertLink(t('First page'), 0, t('Nodetitle freelink was generated successfully.'));
+    $this->assertLink(t('First page'), 1, t('Nodetitle freelink was generated successfully.'));
     $this->assertLinkByHref('/search/node/test', 0,
                             t('Search freelink was generated successfully.'));
     $this->assertLink(t('Second page'), 0, t('Nid freelink was generated successfully.'));
@@ -133,5 +142,7 @@ class FreelinkingTest extends DrupalWebTestCase {
     $this->assertLink(t('Third page'), 0, t('Path freelink was generated successfully.'));
     $this->assertLinkByHref('http://en.wikipedia.org/wiki/Main_Page', 0,
                             t('Wikipedia freelink was generated successfully.'));
+    $this->pass(t('Verifying compatibility with other modules...'));
+    $this->assertNoPattern(t('/Plugin .* Not Found/'), t('Media tag was not parsed by freelinking module.'));
   }
 }

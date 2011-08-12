@@ -59,7 +59,6 @@ function _freelinking_process($text, $filter) {
   // Loop through every freelink format
   // Space at text start prevents match failure at start.
   preg_match_all($regex[$syntax], ' ' . $text, $matches, PREG_SET_ORDER);
-
   foreach ($matches as $match) {
     $current_plugin = '';
 
@@ -390,12 +389,10 @@ function _freelinking_match_pattern($separator = NULL) {
   $separator = preg_quote($separator);
 
   $option['double_bracket'] =
-    '/(?<!\\\\)\[\[(.+' . $separator . '?.+)]]/Uu';
+    '/(?<!\\\\)\[\[([A-Za-z0-9]{1}.+' . $separator . '?.+)]]/Uu';
   $option['single_bracket'] =
     '/(?<!\\\\)\[(.+' . $separator . '?.+)]/Uu';
   $option['markdown'] =
     '/(?<!\\\\)(\[([^\]]+)\]\((.+)(?:' . $separator . '(.+))?(?:\s"(.+)")?\))/Uu';
   return $option;
 }
-
-// vim: tw=300 nowrap syn=php
