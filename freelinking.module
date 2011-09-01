@@ -136,9 +136,10 @@ function _freelinking_tips($delta, $format, $long = FALSE) {
   $text .= '<br />';
   $text .= t('Below is a list of available types of freelinks you may use, organized as <strong>Plugin Name</strong>: <em>[indicator]</em>.');
 
+  $tips = array();
   foreach ($plugins as $name => $plugin) {
     $tips[$name] = '<strong>' . drupal_ucfirst($name) . '</strong> <em>[' . $plugin['indicator'] . ']</em>';
-    if ($plugin['tip']) {
+    if (isset($plugin['tip'])) {
       $tips[$name] .= ' — ' . $plugin['tip'];
     }
   }
