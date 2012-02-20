@@ -19,7 +19,7 @@ $freelinking['nodetitle'] = array(
  */
 function freelinking_nodetitle_callback($target, $plugin) {
   $node = freelinking_nodetitle_nid_from_title($target);
-  
+
   // if no node was found, identify proceed with configured failover
   if (!$node) {
     return _freelinking_nodetitle_failure($target);
@@ -27,7 +27,7 @@ function freelinking_nodetitle_callback($target, $plugin) {
 
   // construct values for link
   $title = $target['text'] ? $target['text'] : $node->title;
-  
+
   if (!$target['tooltip']) {
     $target['tooltip'] = freelinking_internal_tooltip('node', $node->nid);
   }
@@ -53,12 +53,14 @@ function freelinking_nodetitle_settings() {
 
   $failover_option['none'] = t('Do nothing');
 
+  $extra_description = '';
+
   // if Create Node plugin is available, it's an option!
   if (module_exists('freelinking_prepopulate')) {
     $failover_option['create'] = t('Add a link to create content. (Without Permission: Access Denied)');
   }
   else {
-    $extra_description = '<br /><strong>'
+    $extra_description .= '<br /><strong>'
       . t('Note: Enable %module for Content Creation option.', array('%module' => 'Freelinking Create'))
       . '</strong>';
   }
@@ -78,6 +80,8 @@ function freelinking_nodetitle_settings() {
     }
   }
   $failover_option['error'] = t('Insert an error message');
+
+  $failover_option['showtext'] = t('Show text');
 
   $form['freelinking_nodetitle_failover'] = array(
     '#title' => t('If a suitable content is not found'),
@@ -125,7 +129,7 @@ function freelinking_nodetitle_nid_from_title(&$target) {
   // language restriction. Includes next-best-language logic.
   $language = array(language_default('language'), '');
   if (module_exists('locale')) {
-    if ($target['language']) {
+    if (isset($target['language'])) {
       array_unshift($language, $target['language']);
     }
     foreach ($language as $priority) {
@@ -153,11 +157,14 @@ function _freelinking_nodetitle_failure($target) {
   switch ($failover) {
     case 'create':
       return array('failover' => 'createnode', 'target' => $target);
+    case 'showtext':
+      return array('failover' => 'showtext', 'target' => $target);
     case 'search':
       return array('failover' => 'search', 'target' => $target);
     case 'error':
       return array('failover' => 'error', 'message' => t('%title not found',
         array('%title' => $target['dest'])));
+
   }
   // do nothing
   return FALSE;
@@ -167,7 +174,7 @@ function _freelinking_nodetitle_failure($target) {
  * Find the best default failover
  */
 function _freelinking_nodetitle_default_failover() {
-  if (module_exists('freelinking_create')) {
+  if (module_exists('freelinking_prepopulate')) {
     return 'create node';
   }
   elseif (module_exists('search')) {
@@ -175,5 +182,3 @@ function _freelinking_nodetitle_default_failover() {
   }
   return 'none';
 }
-
-// vim: tw=300 nowrap syn=php
