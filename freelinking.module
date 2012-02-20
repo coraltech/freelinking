@@ -390,9 +390,9 @@ function _freelinking_match_pattern($separator = NULL) {
   $separator = preg_quote($separator);
 
   $option['double_bracket'] =
-    '/(?<!\\\\)\[\[([A-Za-z0-9]{1}.+' . $separator . '?.+)]]/Uu';
+    '/(?<!\\\\)\[\[([A-Za-z0-9]{1}.+' . $separator . '?.+|.+)]]/Uu';
   $option['single_bracket'] =
-    '/(?<!\\\\)\[(.+' . $separator . '?.+)]/Uu';
+    '/(?<!\\\\)\[(.+' . $separator . '?+|.+)]/Uu';
   $option['markdown'] =
     '/(?<!\\\\)(\[([^\]]+)\]\((.+)(?:' . $separator . '(.+))?(?:\s"(.+)")?\))/Uu';
   return $option;
