@@ -56,7 +56,7 @@ function hook_freelink_alter(&$link, $target, $plugin_name, $plugin) {
     unset($link[2]['attributes']['title']);
   }
   elseif ($plugin_name == 'green_link') {
-    $link[2]['attributes']['class'] .= ' green';
+    $link[2]['attributes']['class'][] = 'green';
   }
 }
 
