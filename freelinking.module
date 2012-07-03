@@ -11,7 +11,7 @@ require DRUPAL_ROOT . '/' . (drupal_get_path('module', 'freelinking') . '/freeli
  * Implements hook_menu().
  */
 function freelinking_menu() {
-  $items['admin/config/freelinking'] = array(
+  $items['admin/config/content/freelinking'] = array(
     'title' => 'Freelinking settings',
     'description' => 'Configure settings for the freelinking input filter',
     'page callback' => 'drupal_get_form',

@@ -19,4 +19,4 @@ files[] = plugins/freelinking_search.inc
 files[] = plugins/freelinking_user.inc
 files[] = plugins/freelinking_wiki.inc
 
-configure = admin/config/freelinking
+configure = admin/config/content/freelinking
