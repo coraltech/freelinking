@@ -21,6 +21,7 @@ function freelinking_prepopulate_freelinking() {
     'callback' => 'freelinking_prepopulate_node_callback',
     'settings' => 'freelinking_prepopulate_node_settings',
     'failover' => array('search'),
+    'tip' => t('Links to a prepopulated node/add form.'),
   );
   return $freelinking;
 }
