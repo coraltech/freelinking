@@ -129,6 +129,8 @@ function freelinking_prepopulate_node_settings() {
  * Gets the first available type
  */
 function _freelinking_prepopulate_default_node_type() {
+  $types = array();
   $types = node_type_get_names();
-  return $types[0];
+  $types = array_keys($types);
+  return array_shift($types);
 }
