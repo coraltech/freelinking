@@ -1,0 +1,59 @@
+diff --git a/modules/freelinking_prepopulate/freelinking_prepopulate.utilities.inc b/modules/freelinking_prepopulate/freelinking_prepopulate.utilities.inc
+index 3b0b5da..14b5f69 100644
+--- a/modules/freelinking_prepopulate/freelinking_prepopulate.utilities.inc
++++ b/modules/freelinking_prepopulate/freelinking_prepopulate.utilities.inc
+@@ -24,6 +24,7 @@
+  */
+ function freelinking_prepopulate_fields_from_page($fields, $plugin = 'nodecreate', $path = NULL) {
+   static $prepopulate;
++  static $entities = array();
+   $query = array();
+   $index = $plugin . serialize($fields);
+   if (!$prepopulate[$index]) {
+@@ -31,20 +32,30 @@ function freelinking_prepopulate_fields_from_page($fields, $plugin = 'nodecreate
+       $prepopulate[$index] = array_intersect_key(freelinking_prepopulate_list_fields($plugin), $fields);
+     }
+   }
+-
+-  if ($plugin == 'nodecreate' && arg(0) == 'node' && is_numeric(arg(1)) && !arg(2)) {
+-    $object = node_load(arg(1));
++  
++  if ($plugin == 'nodecreate' && arg(0) == 'node' && is_numeric(arg(1))) {
++    $nid = arg(1);
++    
++    // recursion protection
++    if (isset($entities[$nid])) {
++      return $query;
++    }
++    else {
++      $entities[$nid] = TRUE;
++      $object = node_load($nid);
++      unset($entities[$nid]);
++    }
+   }
+-
+   if (isset($prepopulate[$index]) && is_array($prepopulate[$index])) {
+     foreach ($prepopulate[$index] as $field => $definition) {
+       switch ($field) {
+         case 'og':
+-          $group = og_get_group_context();
+-          $query[$definition['prepopulate']] = $group->nid;
++          if (isset($object->og_group_ref)) {
++            $query[$definition['prepopulate']] = $object->og_group_ref[LANGUAGE_NONE][0]['target_id'];
++          }
+           break;
+         case 'taxonomy':
+-          if (!isset($object) || !$object->taxonomy) {
++          if (!isset($object) || !isset($object->taxonomy)) {
+             break;
+           }
+           foreach ($object->taxonomy as $term) {
+@@ -58,7 +69,7 @@ function freelinking_prepopulate_fields_from_page($fields, $plugin = 'nodecreate
+           break;
+         default:
+           if ($object->$field) {
+-            $query[$definition['prepopulate']] = $object->field;
++            $query[$definition['prepopulate']] = $object->$field;
+           }
+           break;
+       }
