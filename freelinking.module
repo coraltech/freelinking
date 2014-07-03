@@ -87,7 +87,7 @@ function _freelinking_process($text, $filter) {
       $target = substr($match[1], $delim + 1);
       // find a plugin for the match
       foreach (array_keys($freelinking) as $plugin) {
-        if ($plugin['enabled']
+        if (!empty($plugin['enabled'])
            && preg_match($freelinking[$plugin]['indicator'], $indicator)) {
           $current_plugin = $plugin;
         }
